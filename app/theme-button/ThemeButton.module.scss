@@ -1,0 +1,25 @@
+.main {
+  position: fixed;
+  right: 20px;
+  top: 6px;
+  z-index: 999999;
+  background-color: var(--color-background-level-2);
+  border-radius: 40px;
+  box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.4);
+  transition: all 0.3s;
+  & > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    transition: all 0.3s;
+
+    & svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--color-font-primary);
+      transition: fill 0.3s;
+    }
+  }
+}

@@ -1,0 +1,34 @@
+.search_bar_box {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 48px;
+  padding: 12px;
+  border-bottom: 1px solid var(--color-font-secondary);
+  background-color: var(--color-background);
+  z-index: 9999;
+}
+
+.inner_box {
+  width: 80vw;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  column-gap: 4px;
+  border-radius: 6px;
+  background-color: #dedede;
+}
+
+.search_bar_input {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  padding: 6px 12px;
+  outline: none;
+}

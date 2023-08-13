@@ -1,0 +1,82 @@
+:root,
+body {
+  --color-background: #f2f2f2;
+  --color-background-level-2: #f2f2f2;
+  --color-font-primary: #121212;
+  --color-font-secondary: #121212;
+  --color-font-tertiary: #121212;
+  --color-error: #d11f1f;
+  --color-primary-accent: #ae570b;
+  --color-secondary-accent: #a55d05;
+  --color-tertiary-accent: #6a2008;
+  --border-radius-primary: 10px;
+  --size-font-xl: 20px;
+  --size-font-l: 18px;
+  --size-font-m: 16px;
+  --size-font-s: 14px;
+  --size-font-xs: 12px;
+  --size-title-l: 28px;
+  --size-title-m: 26px;
+  --size-title-s: 24px;
+}
+
+body.dark {
+  --color-background: #121212;
+  --color-background-level-2: #373737;
+  --color-font-primary: rgba(255, 255, 255, 0.78);
+  --color-font-secondary: rgba(255, 255, 255, 0.6);
+  --color-font-tertiary: rgba(255, 255, 255, 0.38);
+  --color-error: rgba(237, 50, 33, 0.6);
+  --color-primary-accent: #df9501;
+  --color-secondary-accent: #b86e00;
+  --color-tertiary-accent: #967569;
+}
+
+html,
+body {
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-font-primary);
+  transition: background-color 0.3s ease;
+  min-height: 100vh;
+}
+
+html {
+  height: 100%;
+}
+
+html,
+body,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+pre {
+  word-break: keep-all;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+li {
+  list-style: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

@@ -1,0 +1,36 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "jest --watch",
+    "test:ci": "jest --ci"
+  },
+  "dependencies": {
+    "@react-google-maps/api": "^2.19.2",
+    "axios": "^1.4.0",
+    "next": "latest",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-slick": "^0.29.0",
+    "sass": "^1.64.1",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^9.3.1",
+    "@testing-library/jest-dom": "5.16.4",
+    "@testing-library/react": "14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.5.3",
+    "@types/react": "^18.2.17",
+    "@types/react-slick": "^0.23.10",
+    "@types/testing-library__jest-dom": "5.14.5",
+    "eslint": "^8.46.0",
+    "jest": "29.5.0",
+    "jest-environment-jsdom": "29.5.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.1.6",
+    "typescript-plugin-css-modules": "^5.0.1"
+  }
+}
