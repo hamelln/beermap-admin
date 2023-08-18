@@ -1,16 +1,5 @@
 const Loading = () => {
-  return (
-    <article style={{ width: "100vw" }}>
-      <div>
-        <img
-          src="/brewery-image.webp"
-          alt="brewery image"
-          fetchPriority="high"
-          style={{ width: "100%", aspectRatio: "9/8" }}
-        />
-      </div>
-    </article>
-  );
+  return <article style={{ width: "100vw" }}>기다려주세요...</article>;
 };
 
 export default Loading;

@@ -10,12 +10,15 @@ import {
   loadScrollPosition,
 } from "@/utils/search-result-cacher";
 import BreweryList from "./brewery-list/BreweryList";
+import MouseClick from "@/types/MouseClick";
+import { useRouter } from "next/navigation";
 
 const Search = () => {
   const [inputText, setInputText] = useState<string>("");
   const [breweries, setbreweries] = useState<Brewery[]>([]);
   const [isPending, startTransition] = useTransition();
   const breweriesApi = new BreweriesApi();
+  const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);
@@ -50,10 +53,27 @@ const Search = () => {
     });
   }, [inputText]);
 
+  const handleClick = (e: MouseClick) => {
+    e.preventDefault();
+    router.push(`/new`);
+  };
+
   return (
     <>
       <SearchBar inputText={inputText} handleChange={handleChange} />
       <BreweryList inputText={inputText} breweries={breweries} />
+      <button
+        style={{
+          backgroundColor: "yellow",
+          position: "fixed",
+          bottom: "10vh",
+          left: "2vw",
+          zIndex: "9999",
+        }}
+        onClick={handleClick}
+      >
+        새 브루어리 작성
+      </button>
     </>
   );
 };
