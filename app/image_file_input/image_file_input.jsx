@@ -11,15 +11,22 @@ const ImageFileInput = memo(({ imageUploader, onFileChange }) => {
 
   const onChange = async (event) => {
     setLoading(true);
-    const uploaded = await imageUploader.upload(event.target.files[0]);
+
+    const uploadedImages = [];
+    const files = event.target.files;
+
+    for (const file of files) {
+      const uploaded = await imageUploader.upload(file);
+      uploadedImages.push({
+        id: uploaded.public_id,
+        small: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_280,h_280/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
+        medium: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_400,h_400/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
+        large: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_800,h_800/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
+      });
+    }
+
     setLoading(false);
-    const srcs = {
-      id: uploaded.public_id,
-      small: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_280,h_280/f_auto/q_auto/${uploaded["public_id"]}.${uploaded.format}`,
-      medium: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_400,h_400/f_auto/q_auto/${uploaded["public_id"]}.${uploaded.format}`,
-      large: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_800,h_800/f_auto/q_auto/${uploaded["public_id"]}.${uploaded.format}`,
-    };
-    onFileChange(srcs);
+    onFileChange(uploadedImages);
   };
 
   return (

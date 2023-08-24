@@ -13,8 +13,6 @@ interface Props {
 }
 
 export default function BreweryEditForm({ breweryData }: any) {
-  console.log(breweryData);
-
   const [breweryName, setBreweryName] = useState(breweryData.breweryName);
   const [breweryIntro, setBreweryIntro] = useState(breweryData.breweryIntro);
   const [breweryDescription, setBreweryDescription] = useState(
@@ -44,10 +42,8 @@ export default function BreweryEditForm({ breweryData }: any) {
     <ImageFileInput {...props} imageUploader={imageUploader} />
   );
 
-  const onFileChange = async (srcs: Image) => {
-    const newBreweryImages = [...breweryImages];
-    newBreweryImages.push(srcs);
-
+  const onFileChange = async (srcs: Image[]) => {
+    const newBreweryImages = [...breweryImages, ...srcs];
     setBreweryImages(newBreweryImages);
     const updatedBrewery = {
       ...breweryData,
