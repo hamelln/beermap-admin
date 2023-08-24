@@ -5,6 +5,6 @@ export interface OfficeHour {
   lastOrder?: string;
 }
 
-export default interface OfficeHours {
-  [K: string]: OfficeHour;
-}
+type OfficeHours = Record<string, OfficeHour>;
+
+export default OfficeHours;
