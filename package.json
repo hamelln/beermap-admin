@@ -8,6 +8,8 @@
     "test:ci": "jest --ci"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.11.2",
+    "@cloudinary/url-gen": "^1.11.2",
     "@react-google-maps/api": "^2.19.2",
     "axios": "^1.4.0",
     "next": "latest",

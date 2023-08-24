@@ -36,6 +36,6 @@
     "**/*.tsx",
     "types.d.ts",
     ".next/types/**/*.ts"
-  ],
+, "app/new/page.jsx", "app/[id]/NewBreweryForm.jsx"  ],
   "exclude": ["node_modules"]
 }

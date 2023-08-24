@@ -13,6 +13,7 @@
 /out/
 
 .env*
+/breweries.json
 
 # production
 /build
