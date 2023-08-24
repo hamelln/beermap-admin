@@ -4,12 +4,17 @@ import React, { useState } from "react";
 import styles from "./BreweryDetails.module.scss";
 import BreweriesApi from "@/services/BreweriesApi";
 import Brewery from "@/types/Brewery";
+import ImageFileInput from "@/app/image_file_input/image_file_input";
+import ImageUploader from "@/services/image-uploader";
+import Image from "@/types/Image";
 
 interface Props {
   breweryData: Brewery;
 }
 
-export default function BreweryForm({ breweryData }: any) {
+export default function BreweryEditForm({ breweryData }: any) {
+  console.log(breweryData);
+
   const [breweryName, setBreweryName] = useState(breweryData.breweryName);
   const [breweryIntro, setBreweryIntro] = useState(breweryData.breweryIntro);
   const [breweryDescription, setBreweryDescription] = useState(
@@ -27,8 +32,29 @@ export default function BreweryForm({ breweryData }: any) {
   const [signatureBeerDescription, setSignatureBeerDescription] = useState(
     breweryData.signatureBeer.beerDescription
   );
+  const [breweryImages, setBreweryImages] = useState<Image[]>(
+    breweryData.images ?? []
+  );
+
   const days = ["월", "화", "수", "목", "금", "토", "일"];
   const breweriesApi = new BreweriesApi();
+  const imageUploader = new ImageUploader();
+
+  const FileInput = (props: any) => (
+    <ImageFileInput {...props} imageUploader={imageUploader} />
+  );
+
+  const onFileChange = async (srcs: Image) => {
+    const newBreweryImages = [...breweryImages];
+    newBreweryImages.push(srcs);
+
+    setBreweryImages(newBreweryImages);
+    const updatedBrewery = {
+      ...breweryData,
+      images: newBreweryImages,
+    };
+    await breweriesApi.updateBrewery(updatedBrewery);
+  };
 
   const handleClick = async () => {
     await breweriesApi.deleteBrewery(breweryData.id);
@@ -51,6 +77,7 @@ export default function BreweryForm({ breweryData }: any) {
       address,
       phone,
       websiteUrl,
+      images: breweryImages,
       officeHours,
       signatureBeer: updatedSignatureBeer,
     };
@@ -59,8 +86,31 @@ export default function BreweryForm({ breweryData }: any) {
   };
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
+      <div className={styles.img_box}>
+        {breweryImages.map((srcs: Image, i: number) => {
+          return (
+            <img
+              key={i}
+              src={srcs.small}
+              srcSet={`${srcs.small} 280w, ${srcs.medium} 400w, ${srcs.large} 800w`}
+              sizes="100vw"
+              alt="브루어리 이미지"
+            />
+          );
+        })}
+      </div>
       <div className={styles.info_box}>
-        <label htmlFor="breweryName">가게 이름</label>
+        <FileInput onFileChange={onFileChange} />
+      </div>
+      <div className={styles.info_box}>
+        <label
+          htmlFor="breweryName"
+          onClick={() => {
+            console.log(breweryImages);
+          }}
+        >
+          가게 이름
+        </label>
         <input
           type="text"
           id="breweryName"
@@ -132,8 +182,8 @@ export default function BreweryForm({ breweryData }: any) {
       <div className={styles.info_box}>
         <label htmlFor="officeHours">운영 시간</label>
         <ul>
-          {days.map((day) => (
-            <div className={styles.info_box} key={day}>
+          {days.map((day, i) => (
+            <div className={styles.info_box} key={i}>
               <p>{day}요일</p>
               영업 개시
               <input

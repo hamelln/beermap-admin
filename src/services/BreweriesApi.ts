@@ -1,5 +1,4 @@
 import Brewery from "@/types/Brewery";
-import BreweryDetailsProps from "@/types/BreweryDetailsProps";
 
 class BreweriesApi {
   // private readonly baseUrl: string =
@@ -11,6 +10,7 @@ class BreweriesApi {
     const breweries: Brewery[] = await fetch(`${this.baseUrl}?q=${query}`, {
       method: "POST",
     }).then((res) => res.json());
+
     return breweries;
   }
 

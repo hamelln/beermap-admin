@@ -5,7 +5,7 @@ import styles from "./BreweryDetails.module.scss";
 import BreweriesApi from "@/services/BreweriesApi";
 import Brewery from "@/types/Brewery";
 
-export default function NewBreweryForm() {
+export default function BreweryAddForm() {
   const [breweryName, setBreweryName] = useState("");
   const [breweryIntro, setBreweryIntro] = useState("");
   const [breweryDescription, setBreweryDescription] = useState("");

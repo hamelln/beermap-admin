@@ -1,6 +1,6 @@
 import React from "react";
 import BreweriesApi from "@/services/BreweriesApi";
-import BreweryForm from "./BreweryForm";
+import BreweryForm from "./brewery_edit_form";
 import Brewery from "@/types/Brewery";
 
 interface Props {
