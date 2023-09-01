@@ -16,9 +16,9 @@ class BreweriesApi {
 
   async fetchBreweryById(breweryId: string): Promise<Brewery> {
     try {
-      const brewery: Brewery = await fetch(`${this.baseUrl}/${breweryId}`).then(
-        (res) => res.json()
-      );
+      const brewery: Brewery = await fetch(`${this.baseUrl}/${breweryId}`, {
+        cache: "no-store",
+      }).then((res) => res.json());
       return brewery;
     } catch (e: any) {
       if (e.response.status === 404) {
