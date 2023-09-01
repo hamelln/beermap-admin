@@ -8,6 +8,8 @@ const ImageFileInput = memo(({ imageUploader, onFileChange }) => {
     event.preventDefault();
     inputRef.current.click();
   };
+  const [SMALL_WIDTH, MEDIUM_WIDTH, LARGE_WIDTH] = [560, 856, 1600];
+  const [SMALL_HEIGHT, MEDIUM_HEIGHT, LARGE_HEIGHT] = [560, 856, 1600];
 
   const onChange = async (event) => {
     setLoading(true);
@@ -19,9 +21,9 @@ const ImageFileInput = memo(({ imageUploader, onFileChange }) => {
       const uploaded = await imageUploader.upload(file);
       uploadedImages.push({
         id: uploaded.public_id,
-        small: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_280,h_280/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
-        medium: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_400,h_400/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
-        large: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_800,h_800/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
+        small: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_${SMALL_WIDTH},h_${SMALL_HEIGHT}/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
+        medium: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_${MEDIUM_WIDTH},h_${MEDIUM_HEIGHT}/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
+        large: `${process.env.NEXT_PUBLIC_CLOUDINARY_API_URL}/c_scale,w_${LARGE_WIDTH},h_${LARGE_HEIGHT}/f_auto/q_auto/${uploaded.public_id}.${uploaded.format}`,
       });
     }
 
