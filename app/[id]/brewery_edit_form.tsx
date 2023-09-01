@@ -6,7 +6,8 @@ import BreweriesApi from "@/services/BreweriesApi";
 import Brewery from "@/types/Brewery";
 import ImageFileInput from "@/app/image_file_input/image_file_input";
 import ImageUploader from "@/services/image-uploader";
-import Image from "@/types/Image";
+import Img from "@/types/Img";
+import Image from "next/image";
 
 interface Props {
   breweryData: Brewery;
@@ -30,7 +31,7 @@ export default function BreweryEditForm({ breweryData }: any) {
   const [signatureBeerDescription, setSignatureBeerDescription] = useState(
     breweryData.signatureBeer.beerDescription
   );
-  const [breweryImages, setBreweryImages] = useState<Image[]>(
+  const [breweryImages, setBreweryImages] = useState<Img[]>(
     breweryData.images ?? []
   );
 
@@ -42,7 +43,7 @@ export default function BreweryEditForm({ breweryData }: any) {
     <ImageFileInput {...props} imageUploader={imageUploader} />
   );
 
-  const onFileChange = async (srcs: Image[]) => {
+  const onFileChange = async (srcs: Img[]) => {
     const newBreweryImages = [...breweryImages, ...srcs];
     setBreweryImages(newBreweryImages);
     const updatedBrewery = {
@@ -82,16 +83,17 @@ export default function BreweryEditForm({ breweryData }: any) {
   };
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <div className={styles.img_box}>
-        {breweryImages.map((srcs: Image, i: number) => {
+      <div className={styles.image_box}>
+        {breweryImages.map((srcs: Img, i: number) => {
           return (
-            <img
-              key={i}
-              src={srcs.small}
-              srcSet={`${srcs.small} 280w, ${srcs.medium} 400w, ${srcs.large} 800w`}
-              sizes="100vw"
-              alt="브루어리 이미지"
-            />
+            <div key={i} className={styles.image}>
+              <Image
+                src={srcs.small}
+                width={200}
+                height={200}
+                alt="브루어리 이미지"
+              />
+            </div>
           );
         })}
       </div>
