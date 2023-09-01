@@ -1,8 +1,13 @@
-class ImageUploader {
-  private USER_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_USER_NAME!;
-  private CLOUD_URL = process.env.NEXT_PUBLIC_CLOUDINARY_URL!;
+import {
+  CloudinaryResponse,
+  ImageUploaderInterface,
+} from "@/types/ImageUploaderInterface";
 
-  async upload(file: File) {
+class ImageUploader implements ImageUploaderInterface {
+  private readonly USER_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_USER_NAME!;
+  private readonly CLOUD_URL = process.env.NEXT_PUBLIC_CLOUDINARY_URL!;
+
+  async upload(file: File): Promise<CloudinaryResponse> {
     const data = new FormData();
     data.append("file", file);
     data.append("upload_preset", this.USER_NAME);
