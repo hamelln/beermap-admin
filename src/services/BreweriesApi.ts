@@ -1,4 +1,5 @@
 import Brewery from "@/types/Brewery";
+import BreweryDetailsProps from "@/types/BreweryDetailsProps";
 
 class BreweriesApi {
   // private readonly baseUrl: string =
@@ -15,10 +16,14 @@ class BreweriesApi {
   }
 
   async fetchBreweryById(breweryId: string): Promise<Brewery> {
+  async fetchBreweryById(breweryId: string): Promise<BreweryDetailsProps> {
     try {
       const brewery: Brewery = await fetch(`${this.baseUrl}/${breweryId}`, {
         cache: "no-store",
       }).then((res) => res.json());
+      const brewery: BreweryDetailsProps = await fetch(
+        `${this.baseUrl}/${breweryId}`
+      ).then((res) => res.json());
       return brewery;
     } catch (e: any) {
       if (e.response.status === 404) {
