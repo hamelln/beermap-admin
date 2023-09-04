@@ -1,5 +1,5 @@
 import Beer from "./Beer";
-import Image from "./Image";
+import Img from "./Img";
 import OfficeHours from "./OfficeHours";
 import { User } from "./User";
 
@@ -14,7 +14,7 @@ export default interface Brewery {
   websiteType?: string;
   websiteUrl?: string;
   likes?: User[];
-  images?: Image[];
+  images?: Img[];
   address: string;
   city: string;
   stateProvince: string;
