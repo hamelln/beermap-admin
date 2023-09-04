@@ -15,12 +15,8 @@ class BreweriesApi {
     return breweries;
   }
 
-  async fetchBreweryById(breweryId: string): Promise<Brewery> {
   async fetchBreweryById(breweryId: string): Promise<BreweryDetailsProps> {
     try {
-      const brewery: Brewery = await fetch(`${this.baseUrl}/${breweryId}`, {
-        cache: "no-store",
-      }).then((res) => res.json());
       const brewery: BreweryDetailsProps = await fetch(
         `${this.baseUrl}/${breweryId}`
       ).then((res) => res.json());
