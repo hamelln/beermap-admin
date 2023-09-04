@@ -1,8 +1,8 @@
-type Image = {
+type Img = {
   id: string;
   small: string;
   medium: string;
   large: string;
 };
 
-export default Image;
+export default Img;
