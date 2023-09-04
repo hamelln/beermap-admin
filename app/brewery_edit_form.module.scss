@@ -1,5 +1,12 @@
 .section {
   display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 4rem 15%;
+}
+
+.form {
+  display: flex;
   flex-direction: column;
   row-gap: 1rem;
 
@@ -60,6 +67,7 @@
     left: 4px;
     padding: 10px;
     background-color: rgba(255, 255, 255, 0.625);
+    color: black !important;
     border-radius: 4px;
   }
 
@@ -88,4 +96,32 @@
     width: 60px;
     text-align: center;
   }
+}
+
+.submit_box {
+  display: flex;
+  column-gap: 1rem;
+}
+
+.submit_button {
+  width: 10rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 1px solid var(--color-primary-accent);
+  border-radius: 4px;
+}
+
+.delete_brewery {
+  width: 10rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 1px solid var(--color-primary-accent);
+  color: var(--color-error) !important;
+  border-radius: 4px;
 }
