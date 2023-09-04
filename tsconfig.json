@@ -35,7 +35,10 @@
     "**/*.ts",
     "**/*.tsx",
     "types.d.ts",
-    ".next/types/**/*.ts"
-, "app/new/page.jsx", "app/[id]/NewBreweryForm.jsx"  ],
+    ".next/types/**/*.ts",
+    "app/new/page.jsx",
+    "app/[id]/NewBreweryForm.jsx",
+    "app/image_file_input/image_file_input.jsx"
+  ],
   "exclude": ["node_modules"]
 }
