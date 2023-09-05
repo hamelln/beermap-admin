@@ -8,7 +8,10 @@ type Event =
   | ChangeEvent<HTMLTextAreaElement>
   | MouseClick;
 
-const useFormData = (onChange: Dispatch<SetStateAction<Object>>) => {
+const useFormData = (
+  onChange: Dispatch<SetStateAction<Object>>,
+  setFullAddress: Dispatch<SetStateAction<string>>
+) => {
   const [selectedDay, setSelectedDay] = useState<string>("월");
 
   const handleFormData = (e: Event) => {
@@ -104,11 +107,11 @@ const useFormData = (onChange: Dispatch<SetStateAction<Object>>) => {
 
   const handleFullAddress = (input: string) => {
     const addressParts = input.split(" ");
-    if (addressParts.length >= 2) {
-      handleForm("stateProvince", addressParts[0]);
-      handleForm("city", addressParts[1]);
-    }
-    handleForm("fullAddress", input);
+    const [state, city, ...address] = addressParts;
+    handleForm("stateProvince", state);
+    handleForm("city", city);
+    handleForm("address", address.join(" "));
+    setFullAddress(input);
   };
 
   const handlePhone = (input: string, onChange: any) => {

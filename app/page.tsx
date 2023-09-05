@@ -2,7 +2,7 @@
 
 import BreweryDetailsProps from "@/types/BreweryDetailsProps";
 import useFormData from "@/utils/useFormData";
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import S from "./brewery_edit_form.module.scss";
 import Image from "next/image";
 import BreweriesApi from "@/services/BreweriesApi";
@@ -28,7 +28,7 @@ const page = ({ brewery }: Props) => {
     ],
     stateProvince: "",
     city: "",
-    adress: "",
+    address: "",
     postalCode: "",
     longitude: "",
     latitude: "",
@@ -84,6 +84,7 @@ const page = ({ brewery }: Props) => {
       },
     },
   });
+  const [fullAddress, setFullAddress] = useState<string>("");
   const days: string[] = ["월", "화", "수", "목", "금", "토", "일"];
   const breweriesApi = new BreweriesApi();
   const imageUploader = new ImageUploader();
@@ -102,26 +103,31 @@ const page = ({ brewery }: Props) => {
   //   await breweriesApi.updateBrewery(updatedBrewery);
   // };
 
-  // const handleDelete = (index: number) => {
-  //   const updatedImages = [...updatedBrewery.images];
-  //   updatedImages.splice(index, 1);
-  //   handleFormChange("images", updatedImages);
-  // };
+  const { handleFormData, selectedDay } = useFormData(
+    setUpdatedBrewery,
+    setFullAddress
+  );
 
-  const { handleFormData, selectedDay } = useFormData(setUpdatedBrewery);
+  const deleteImage = (index: number) => {
+    const updatedImages = updatedBrewery.images.filter(
+      (_: any, i: number) => i !== index
+    );
+    const newBrewery = { ...updatedBrewery, images: updatedImages };
+    setUpdatedBrewery(newBrewery);
+  };
 
   const deleteBrewery = async () => {
     await breweriesApi.deleteBrewery(brewery.id);
   };
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
+  const updateBrewery = async (e: FormEvent) => {
+    e.preventDefault();
     await breweriesApi.updateBrewery(updatedBrewery);
   };
 
   return (
     <section className={S.section}>
-      <form className={S.form} onSubmit={handleSubmit}>
+      <form className={S.form} onSubmit={updateBrewery}>
         <h1>가게 정보 수정</h1>
         <div className={S.info_box}>
           <div className={S.name_box}>
@@ -151,7 +157,14 @@ const page = ({ brewery }: Props) => {
                     width={200}
                     height={200}
                   ></Image>
-                  <button className={S.delete_button}>X</button>
+                  <button
+                    className={S.delete_button}
+                    onClick={() => {
+                      deleteImage(i);
+                    }}
+                  >
+                    X
+                  </button>
                 </li>
               );
             })}
@@ -167,14 +180,29 @@ const page = ({ brewery }: Props) => {
               type="text"
               placeholder="주소"
               name="address"
-              value={updatedBrewery.fullAddress}
+              value={fullAddress}
               onChange={handleFormData}
             />
             <div>도, 특별시, 광역시: {updatedBrewery.stateProvince}</div>
             <div>시군구: {updatedBrewery.city}</div>
+            <div>나머지 주소: {updatedBrewery.address}</div>
           </div>
         </div>
-
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>우편 번호</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="우편 번호"
+              name="postalCode"
+              value={updatedBrewery.postalCode}
+              maxLength={5}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
         <div className={S.info_box}>
           <div className={S.name_box}>
             <span>전화번호</span>
