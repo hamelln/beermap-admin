@@ -2,43 +2,59 @@
 
 import BreweryDetailsProps from "@/types/BreweryDetailsProps";
 import useFormData from "@/utils/useFormData";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import S from "./brewery_edit_form.module.scss";
 import Image from "next/image";
 import BreweriesApi from "@/services/BreweriesApi";
 import ImageUploader from "@/services/image-uploader";
-import ImageFileInput from "./image_file_input/image_file_input";
 import Img from "@/types/Img";
+import MouseClick from "@/types/MouseClick";
+import Brewery from "@/types/Brewery";
 
 interface Props {
-  brewery: BreweryDetailsProps;
+  brewery: Partial<BreweryDetailsProps>;
 }
 
 const page = ({ brewery }: Props) => {
-  const [updatedBrewery, setUpdatedBrewery] = useState<any>({
+  const [updatedBrewery, setUpdatedBrewery] = useState<Brewery>({
     id: "",
     breweryName: "",
     breweryType: "",
     images: [
-      "/brewery-image.webp",
-      "/brewery-image.webp",
-      "/brewery-image.webp",
-      "/brewery-image.webp",
-      "/brewery-image.webp",
+      {
+        id: "ab",
+        small: "/brewery-image.webp",
+        medium: "/brewery-image.webp",
+        large: "/brewery-image.webp",
+      },
+      {
+        id: "bc",
+        small: "/brewery-image.webp",
+        medium: "/brewery-image.webp",
+        large: "/brewery-image.webp",
+      },
+      {
+        id: "dd",
+        small: "/brewery-image.webp",
+        medium: "/brewery-image.webp",
+        large: "/brewery-image.webp",
+      },
     ],
     stateProvince: "",
     city: "",
     address: "",
     postalCode: "",
-    longitude: "",
-    latitude: "",
+    longitude: 0,
+    latitude: 0,
     phone: "",
     websiteUrl: "",
     websiteType: "",
     breweryIntro: "",
     breweryDescription: "",
-    beerName: "",
-    beerDescription: "",
+    signatureBeer: {
+      beerName: "",
+      beerDescription: "",
+    },
     officeHours: {
       월: {
         openTime: "",
@@ -85,35 +101,51 @@ const page = ({ brewery }: Props) => {
     },
   });
   const [fullAddress, setFullAddress] = useState<string>("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [totalFiles, setTotalFiles] = useState<any[]>(
+    updatedBrewery.images.map((_: any) => "url")
+  );
+  const inputRef = useRef<HTMLInputElement>(null);
   const days: string[] = ["월", "화", "수", "목", "금", "토", "일"];
   const breweriesApi = new BreweriesApi();
   const imageUploader = new ImageUploader();
-
-  // const FileInput = (props: any) => (
-  //   <ImageFileInput {...props} imageUploader={imageUploader} />
-  // );
-
-  // const onFileChange = async (srcs: Img[]) => {
-  //   const newBreweryImages = [...breweryImages, ...srcs];
-  //   setBreweryImages(newBreweryImages);
-  //   const updatedBrewery = {
-  //     ...breweryData,
-  //     images: newBreweryImages,
-  //   };
-  //   await breweriesApi.updateBrewery(updatedBrewery);
-  // };
 
   const { handleFormData, selectedDay } = useFormData(
     setUpdatedBrewery,
     setFullAddress
   );
 
+  const onButtonClick = (event: MouseClick) => {
+    event.preventDefault();
+    inputRef?.current?.click();
+  };
+
+  const onChange = async (event: any) => {
+    const files = event.target.files;
+    setTotalFiles([...totalFiles, ...files]);
+    setFiles(files);
+  };
+
   const deleteImage = (index: number) => {
     const updatedImages = updatedBrewery.images.filter(
       (_: any, i: number) => i !== index
     );
+    const updatedTotalFiles = totalFiles.filter(
+      (_: any, i: number) => i !== index
+    );
     const newBrewery = { ...updatedBrewery, images: updatedImages };
+    setTotalFiles(updatedTotalFiles);
     setUpdatedBrewery(newBrewery);
+  };
+
+  const uploadNewImages = async () => {
+    const newFiles = totalFiles.filter((file) => file !== "url");
+    const newCloudinaryImages: Img[] = await imageUploader.upload(newFiles);
+    const filteredImages = updatedBrewery.images.filter(
+      (image: Img) => !image.id.includes("temp")
+    );
+    const newImages = [...filteredImages, ...newCloudinaryImages];
+    setUpdatedBrewery({ ...updatedBrewery, images: newImages });
   };
 
   const deleteBrewery = async () => {
@@ -122,8 +154,36 @@ const page = ({ brewery }: Props) => {
 
   const updateBrewery = async (e: FormEvent) => {
     e.preventDefault();
+    await uploadNewImages();
     await breweriesApi.updateBrewery(updatedBrewery);
   };
+
+  useEffect(() => {
+    if (files) {
+      const fileReader = new FileReader();
+      const newImages = [...updatedBrewery.images];
+
+      const loadImage = (fileIndex: number) => {
+        if (fileIndex < files.length) {
+          fileReader.onload = () => {
+            const src = fileReader.result;
+            const newImage = {
+              id: `temp-${Math.random()}`,
+              small: src,
+              medium: src,
+              large: src,
+            };
+            newImages.push(newImage);
+            loadImage(fileIndex + 1);
+          };
+          fileReader.readAsDataURL(files[fileIndex]);
+        } else {
+          setUpdatedBrewery({ ...updatedBrewery, images: newImages });
+        }
+      };
+      loadImage(0);
+    }
+  }, [files]);
 
   return (
     <section className={S.section}>
@@ -162,11 +222,11 @@ const page = ({ brewery }: Props) => {
             <span>사진</span>
           </div>
           <ul className={S.image_box}>
-            {updatedBrewery.images.map((image: string, i: number) => {
+            {updatedBrewery.images.map((image: Img, i: number) => {
               return (
-                <li key={i} className={S.image}>
+                <li key={image.id as string} className={S.image}>
                   <Image
-                    src={image}
+                    src={image.small}
                     alt="image"
                     width={200}
                     height={200}
@@ -182,7 +242,17 @@ const page = ({ brewery }: Props) => {
                 </li>
               );
             })}
-            <button className={S.upload_button}>업로드</button>
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              name="file"
+              onChange={onChange}
+            />
+            <button className={S.upload_button} onClick={onButtonClick}>
+              업로드
+            </button>
           </ul>
         </div>
         <div className={S.info_box}>

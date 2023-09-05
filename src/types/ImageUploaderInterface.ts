@@ -2,8 +2,10 @@ export interface CloudinaryResponse {
   public_id: string;
   url: string;
   secure_url: string;
+  format: string;
 }
 
 export interface ImageUploaderInterface {
-  upload(file: File): Promise<CloudinaryResponse>;
+  uploadOnce(file: File): Promise<CloudinaryResponse>;
+  upload(files: File[]): any;
 }
