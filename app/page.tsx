@@ -145,6 +145,20 @@ const page = ({ brewery }: Props) => {
         </div>
         <div className={S.info_box}>
           <div className={S.name_box}>
+            <span>브루어리 유형</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="브루어리 유형"
+              value={updatedBrewery.breweryType}
+              name="breweryType"
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
             <span>사진</span>
           </div>
           <ul className={S.image_box}>
@@ -199,6 +213,34 @@ const page = ({ brewery }: Props) => {
               name="postalCode"
               value={updatedBrewery.postalCode}
               maxLength={5}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>경도(longitude)</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="경도"
+              name="longitude"
+              value={updatedBrewery.longitude}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>위도(latitude)</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="위도"
+              name="latitude"
+              value={updatedBrewery.latitude}
               onChange={handleFormData}
             />
           </div>
@@ -297,6 +339,7 @@ const page = ({ brewery }: Props) => {
                 {days.map((day) => (
                   <button
                     key={day}
+                    type="button"
                     name="day"
                     onClick={handleFormData}
                     className={selectedDay === day ? S.selected : ""}
