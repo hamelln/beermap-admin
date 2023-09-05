@@ -1,7 +1,7 @@
 "use client";
 
 import BreweryDetailsProps from "@/types/BreweryDetailsProps";
-import useInput from "@/utils/useInput";
+import useFormData from "@/utils/useFormData";
 import React, { useState } from "react";
 import S from "./brewery_edit_form.module.scss";
 import Image from "next/image";
@@ -15,11 +15,10 @@ interface Props {
 }
 
 const page = ({ brewery }: Props) => {
-  const [formData, setFormData] = useState<any>({
+  const [updatedBrewery, setUpdatedBrewery] = useState<any>({
+    id: "",
     breweryName: "",
-    breweryIntro: "",
-    breweryDescription: "",
-    websiteUrl: "",
+    breweryType: "",
     images: [
       "/brewery-image.webp",
       "/brewery-image.webp",
@@ -27,13 +26,19 @@ const page = ({ brewery }: Props) => {
       "/brewery-image.webp",
       "/brewery-image.webp",
     ],
-    phone: "",
-    fullAddress: "",
-    beerName: "",
-    beerDescription: "",
     stateProvince: "",
     city: "",
+    adress: "",
+    postalCode: "",
+    longitude: "",
+    latitude: "",
+    phone: "",
+    websiteUrl: "",
     websiteType: "",
+    breweryIntro: "",
+    breweryDescription: "",
+    beerName: "",
+    beerDescription: "",
     officeHours: {
       월: {
         openTime: "",
@@ -79,18 +84,13 @@ const page = ({ brewery }: Props) => {
       },
     },
   });
-  const [selectedDay, setSelectedDay] = useState<string>("월");
-  const [isClosed, setIsClosed] = useState<boolean>(false);
-  const [hasBreakTime, setHasBreakTime] = useState<boolean>(false);
-  const [hasLastOrder, setHasLastOrder] = useState<boolean>(false);
   const days: string[] = ["월", "화", "수", "목", "금", "토", "일"];
   const breweriesApi = new BreweriesApi();
   const imageUploader = new ImageUploader();
-  const fileReader = new FileReader();
 
-  const FileInput = (props: any) => (
-    <ImageFileInput {...props} imageUploader={imageUploader} />
-  );
+  // const FileInput = (props: any) => (
+  //   <ImageFileInput {...props} imageUploader={imageUploader} />
+  // );
 
   // const onFileChange = async (srcs: Img[]) => {
   //   const newBreweryImages = [...breweryImages, ...srcs];
@@ -102,51 +102,13 @@ const page = ({ brewery }: Props) => {
   //   await breweriesApi.updateBrewery(updatedBrewery);
   // };
 
-  const handleFormChange = (key: string, value: string | string[]) => {
-    setFormData((formData: any) => ({ ...formData, [key]: value }));
-  };
+  // const handleDelete = (index: number) => {
+  //   const updatedImages = [...updatedBrewery.images];
+  //   updatedImages.splice(index, 1);
+  //   handleFormChange("images", updatedImages);
+  // };
 
-  const handleOfficeHoursChange = (key: string, value: string) => {
-    if (key !== "startTime" && key !== "endTime") {
-      setFormData((formData: any) => ({
-        ...formData,
-        officeHours: {
-          ...formData.officeHours,
-          [selectedDay]: {
-            ...formData.officeHours[selectedDay],
-            [key]: value,
-          },
-        },
-      }));
-    } else {
-      setFormData((formData: any) => ({
-        ...formData,
-        officeHours: {
-          ...formData.officeHours,
-          [selectedDay]: {
-            ...formData.officeHours[selectedDay],
-            breakTime: {
-              ...formData.officeHours[selectedDay].breakTime,
-              [key]: value,
-            },
-          },
-        },
-      }));
-    }
-  };
-
-  const handleInput = useInput(handleFormChange, handleOfficeHoursChange);
-
-  const handleDayClick = (e: any) => {
-    const day = e.target.textContent;
-    setSelectedDay(day);
-  };
-
-  const handleDelete = (index: number) => {
-    const updatedImages = [...formData.images];
-    updatedImages.splice(index, 1);
-    handleFormChange("images", updatedImages);
-  };
+  const { handleFormData, selectedDay } = useFormData(setUpdatedBrewery);
 
   const deleteBrewery = async () => {
     await breweriesApi.deleteBrewery(brewery.id);
@@ -154,7 +116,7 @@ const page = ({ brewery }: Props) => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    await breweriesApi.updateBrewery(formData);
+    await breweriesApi.updateBrewery(updatedBrewery);
   };
 
   return (
@@ -169,9 +131,9 @@ const page = ({ brewery }: Props) => {
             <input
               type="text"
               placeholder="이름"
-              value={formData.breweryName}
+              value={updatedBrewery.breweryName}
               name="breweryName"
-              onChange={handleInput}
+              onChange={handleFormData}
             />
           </div>
         </div>
@@ -180,7 +142,7 @@ const page = ({ brewery }: Props) => {
             <span>사진</span>
           </div>
           <ul className={S.image_box}>
-            {formData.images.map((image: string, i: number) => {
+            {updatedBrewery.images.map((image: string, i: number) => {
               return (
                 <li key={i} className={S.image}>
                   <Image
@@ -189,14 +151,7 @@ const page = ({ brewery }: Props) => {
                     width={200}
                     height={200}
                   ></Image>
-                  <button
-                    className={S.delete_button}
-                    onClick={() => {
-                      handleDelete(i);
-                    }}
-                  >
-                    X
-                  </button>
+                  <button className={S.delete_button}>X</button>
                 </li>
               );
             })}
@@ -212,11 +167,11 @@ const page = ({ brewery }: Props) => {
               type="text"
               placeholder="주소"
               name="address"
-              value={formData.fullAddress}
-              onChange={handleInput}
+              value={updatedBrewery.fullAddress}
+              onChange={handleFormData}
             />
-            <div>도, 특별시, 광역시: {formData.stateProvince}</div>
-            <div>시군구: {formData.city}</div>
+            <div>도, 특별시, 광역시: {updatedBrewery.stateProvince}</div>
+            <div>시군구: {updatedBrewery.city}</div>
           </div>
         </div>
 
@@ -229,9 +184,9 @@ const page = ({ brewery }: Props) => {
               type="text"
               placeholder="전화번호"
               name="phone"
-              value={formData.phone}
+              value={updatedBrewery.phone}
               maxLength={14}
-              onChange={handleInput}
+              onChange={handleFormData}
             />
           </div>
         </div>
@@ -243,11 +198,11 @@ const page = ({ brewery }: Props) => {
             <input
               type="text"
               placeholder="홈페이지, SNS"
-              value={formData.websiteUrl}
+              value={updatedBrewery.websiteUrl}
               name="websiteUrl"
-              onChange={handleInput}
+              onChange={handleFormData}
             />
-            <div>사이트 타입: {formData.websiteType}</div>
+            <div>사이트 타입: {updatedBrewery.websiteType}</div>
           </div>
         </div>
         <div className={S.info_box}>
@@ -259,8 +214,8 @@ const page = ({ brewery }: Props) => {
               type="text"
               placeholder="가게 한 줄 소개"
               name="breweryIntro"
-              value={formData.breweryIntro}
-              onChange={handleInput}
+              value={updatedBrewery.breweryIntro}
+              onChange={handleFormData}
             />
           </div>
         </div>
@@ -272,8 +227,8 @@ const page = ({ brewery }: Props) => {
             <textarea
               placeholder="가게 설명"
               name="breweryDescription"
-              value={formData.breweryDescription}
-              onChange={handleInput}
+              value={updatedBrewery.breweryDescription}
+              onChange={handleFormData}
             />
           </div>
         </div>
@@ -286,8 +241,8 @@ const page = ({ brewery }: Props) => {
               type="text"
               placeholder="추천 맥주 이름"
               name="beerName"
-              value={formData.beerName}
-              onChange={handleInput}
+              value={updatedBrewery.beerName}
+              onChange={handleFormData}
             />
           </div>
         </div>
@@ -299,8 +254,8 @@ const page = ({ brewery }: Props) => {
             <textarea
               placeholder="추천 맥주 설명"
               name="beerDescription"
-              value={formData.beerDescription}
-              onChange={handleInput}
+              value={updatedBrewery.beerDescription}
+              onChange={handleFormData}
             />
           </div>
         </div>
@@ -314,7 +269,8 @@ const page = ({ brewery }: Props) => {
                 {days.map((day) => (
                   <button
                     key={day}
-                    onClick={handleDayClick}
+                    name="day"
+                    onClick={handleFormData}
                     className={selectedDay === day ? S.selected : ""}
                   >
                     {day}
@@ -326,17 +282,17 @@ const page = ({ brewery }: Props) => {
                   <input
                     type="text"
                     placeholder="00:00"
-                    value={formData.officeHours[selectedDay].openTime}
+                    value={updatedBrewery.officeHours[selectedDay].openTime}
                     name="openTime"
-                    onChange={handleInput}
+                    onChange={handleFormData}
                   />{" "}
                   ~
                   <input
                     type="text"
                     placeholder="00:00"
                     name="closeTime"
-                    value={formData.officeHours[selectedDay].closeTime}
-                    onChange={handleInput}
+                    value={updatedBrewery.officeHours[selectedDay].closeTime}
+                    onChange={handleFormData}
                   />
                 </div>
                 <div className={S.time_box}>
@@ -344,27 +300,30 @@ const page = ({ brewery }: Props) => {
                     type="text"
                     placeholder="00:00"
                     value={
-                      formData.officeHours[selectedDay].breakTime.startTime
+                      updatedBrewery.officeHours[selectedDay].breakTime
+                        .startTime
                     }
                     name="startTime"
-                    onChange={handleInput}
+                    onChange={handleFormData}
                   />{" "}
                   ~
                   <input
                     type="text"
                     placeholder="00:00"
                     name="endTime"
-                    value={formData.officeHours[selectedDay].breakTime.endTime}
-                    onChange={handleInput}
+                    value={
+                      updatedBrewery.officeHours[selectedDay].breakTime.endTime
+                    }
+                    onChange={handleFormData}
                   />
                 </div>
                 <div className={S.time_box}>
                   <input
                     type="text"
                     placeholder="00:00"
-                    value={formData.officeHours[selectedDay].lastOrder}
+                    value={updatedBrewery.officeHours[selectedDay].lastOrder}
                     name="lastOrder"
-                    onChange={handleInput}
+                    onChange={handleFormData}
                   />
                 </div>
               </div>

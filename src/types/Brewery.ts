@@ -9,7 +9,6 @@ export default interface Brewery {
   breweryType: string;
   breweryIntro: string;
   breweryDescription: string;
-  officeHours: OfficeHours;
   signatureBeer: Beer;
   websiteType?: string;
   websiteUrl?: string;
@@ -22,4 +21,5 @@ export default interface Brewery {
   phone: string;
   longitude: number;
   latitude: number;
+  officeHours: OfficeHours;
 }
