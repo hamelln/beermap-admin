@@ -61,14 +61,14 @@ const BreweryEditForm = ({ brewery }: Props) => {
     setUpdatedBrewery(newBrewery);
   };
 
-  const uploadNewImages = async () => {
+  const uploadNewImagesAndFetchUrls = async (): Promise<Img[]> => {
     const newFiles = totalFiles.filter((file) => file !== "url");
     const newCloudinaryImages: Img[] = await imageService.upload(newFiles);
     const filteredImages = updatedBrewery.images.filter(
       (image: Img) => !image.id.includes("temp")
     );
-    const newImages = [...filteredImages, ...newCloudinaryImages];
-    setUpdatedBrewery({ ...updatedBrewery, images: newImages });
+    const newImages: Img[] = [...filteredImages, ...newCloudinaryImages];
+    return newImages;
   };
 
   const deleteBrewery = async () => {
@@ -77,8 +77,10 @@ const BreweryEditForm = ({ brewery }: Props) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await uploadNewImages();
-    await breweryService.updateBrewery(updatedBrewery);
+    const images: Img[] = await uploadNewImagesAndFetchUrls();
+    const updatedBreweryWithNewImages = { ...updatedBrewery, images };
+    await breweryService.updateBrewery(updatedBreweryWithNewImages);
+    setUpdatedBrewery(updatedBreweryWithNewImages);
   };
 
   useEffect(() => {
