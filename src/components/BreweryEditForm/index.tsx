@@ -2,7 +2,6 @@
 
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import BreweryDetailsProps from "@/types/BreweryDetailsProps";
 import Img from "@/types/Img";
 import MouseClick from "@/types/MouseClick";
 import Brewery from "@/types/Brewery";
@@ -12,7 +11,7 @@ import ImageService from "@/services/ImageService";
 import S from "./BreweryEditForm.module.scss";
 
 interface Props {
-  brewery: Omit<BreweryDetailsProps, "summarizedOfficeHours">;
+  brewery: Brewery;
 }
 
 const BreweryEditForm = ({ brewery }: Props) => {

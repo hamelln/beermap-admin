@@ -10,7 +10,7 @@ import {
   loadScrollPosition,
 } from "@/utils/search-result-cacher";
 import BreweryService from "@/services/BreweryService";
-import BreweryList from "../src/components/BreweryList";
+import BreweryList from "@/components/BreweryList";
 import SearchBar from "@/components/SearchBar";
 
 const Search = () => {
@@ -25,9 +25,8 @@ const Search = () => {
   };
 
   const handlebreweries = async () => {
-    const newBreweries = await breweryService.fetchBreweriesByInputText(
-      inputText
-    );
+    const newBreweries: Brewery[] =
+      await breweryService.fetchBreweriesByInputText(inputText);
     setbreweries(newBreweries);
   };
 
