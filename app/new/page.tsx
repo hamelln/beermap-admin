@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import styles from "./BreweryDetails.module.scss";
-import BreweriesApi from "@/services/BreweriesApi";
+import BreweriesApi from "@/services/BreweryService";
 import Brewery from "@/types/Brewery";
 
 export default function BreweryAddForm() {

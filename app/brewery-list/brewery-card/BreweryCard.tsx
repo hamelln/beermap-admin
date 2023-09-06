@@ -1,8 +1,8 @@
 import React, { MouseEvent } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Brewery from "@/types/Brewery";
 import S from "./BreweryCard.module.scss";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 interface Props {
   brewery: Brewery;
@@ -17,7 +17,7 @@ const BreweryCard = ({ brewery, saveSearchInfo }: Props) => {
     stateProvince,
     city,
     address,
-    signatureBeer,
+    beerName,
   } = brewery;
   const fullAddress = `${stateProvince} ${city} ${address}`;
   const router = useRouter();
@@ -45,7 +45,7 @@ const BreweryCard = ({ brewery, saveSearchInfo }: Props) => {
             <div className={S.brewery_desc}>{breweryIntro}</div>
             <div>
               <span className={S.recommend_title}>추천 맥주</span>
-              <span className={S.recommend_beer}>{signatureBeer.beerName}</span>
+              <span className={S.recommend_beer}>{beerName}</span>
             </div>
           </div>
         </div>

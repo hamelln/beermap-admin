@@ -1,7 +1,7 @@
 import React from "react";
-import BreweriesApi from "@/services/BreweriesApi";
-import BreweryForm from "./brewery_edit_form";
 import BreweryDetailsProps from "@/types/BreweryDetailsProps";
+import BreweriesApi from "@/services/BreweryService";
+import BreweryForm from "./brewery_edit_form";
 
 interface Props {
   params: { id: string };
@@ -10,8 +10,6 @@ interface Props {
 export default async function BreweryDetails({ params }: Props) {
   const breweriesApi = new BreweriesApi();
   const id = params.id;
-  const breweryInfo: BreweryDetailsProps = await breweriesApi.fetchBreweryById(
-    id
-  );
-  return <BreweryForm breweryData={breweryInfo} />;
+  const brewery: BreweryDetailsProps = await breweriesApi.fetchBreweryById(id);
+  return <BreweryForm brewery={brewery} />;
 }
