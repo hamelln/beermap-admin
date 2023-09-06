@@ -1,0 +1,131 @@
+.section {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 4rem 15%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+
+  & input,
+  textarea {
+    width: 400px;
+    height: auto;
+    padding: 6px;
+    color: var(--color-font-primary);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-font-primary);
+    border-radius: 4px;
+  }
+
+  & textarea {
+    vertical-align: text-top;
+  }
+
+  button:not(.selected) {
+    color: var(--color-font-primary);
+  }
+}
+
+.name_box {
+  width: 8rem;
+}
+
+.info_box {
+  display: flex;
+  align-items: baseline;
+}
+
+.input_box {
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+}
+
+.image_box {
+  display: flex;
+  width: 700px;
+  gap: 10px;
+  align-items: center;
+  padding: 0;
+  flex-wrap: wrap;
+
+  li {
+    position: relative;
+  }
+
+  & img {
+    border-radius: 10px;
+  }
+
+  .delete_button {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.625);
+    color: black !important;
+    border-radius: 4px;
+  }
+
+  .upload_button {
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.625);
+    border-radius: 4px;
+    border: 1px solid var(--color-primary-accent);
+  }
+}
+
+.selected {
+  background-color: var(--color-font-primary);
+  color: var(--color-background);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.time_box {
+  display: flex;
+  align-items: center;
+  column-gap: 6px;
+  margin-top: 1rem;
+
+  & input {
+    width: 60px;
+    text-align: center;
+  }
+}
+
+.image_input {
+  display: none;
+}
+
+.submit_box {
+  display: flex;
+  column-gap: 1rem;
+}
+
+.submit_button {
+  width: 10rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 1px solid var(--color-primary-accent);
+  border-radius: 4px;
+}
+
+.delete_brewery {
+  width: 10rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 1px solid var(--color-primary-accent);
+  color: var(--color-error) !important;
+  border-radius: 4px;
+}

@@ -1,23 +1,23 @@
 "use client";
 
 import React, { ChangeEvent, useEffect, useState, useTransition } from "react";
-import SearchBar from "./search-bar/SearchBar";
-import BreweriesApi from "@/services/BreweriesApi";
+import { useRouter } from "next/navigation";
 import Brewery from "@/types/Brewery";
+import MouseClick from "@/types/MouseClick";
 import {
   loadBreweries,
   loadKeyword,
   loadScrollPosition,
 } from "@/utils/search-result-cacher";
-import BreweryList from "./brewery-list/BreweryList";
-import MouseClick from "@/types/MouseClick";
-import { useRouter } from "next/navigation";
+import BreweryService from "@/services/BreweryService";
+import BreweryList from "../src/components/BreweryList";
+import SearchBar from "@/components/SearchBar";
 
 const Search = () => {
   const [inputText, setInputText] = useState<string>("");
   const [breweries, setbreweries] = useState<Brewery[]>([]);
   const [isPending, startTransition] = useTransition();
-  const breweriesApi = new BreweriesApi();
+  const breweryService = new BreweryService();
   const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +25,7 @@ const Search = () => {
   };
 
   const handlebreweries = async () => {
-    const newBreweries = await breweriesApi.fetchBreweriesByInputText(
+    const newBreweries = await breweryService.fetchBreweriesByInputText(
       inputText
     );
     setbreweries(newBreweries);

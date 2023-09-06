@@ -17,12 +17,12 @@
     "baseUrl": ".",
     "paths": {
       "@/app/*": ["app/*"],
-      "@/pages/*": ["pages/*"],
-      "@/styles/*": ["styles/*"],
-      "@/mocks/*": ["__mocks__/*"],
+      "@/components/*": ["src/components/*"],
       "@/services/*": ["src/services/*"],
       "@/types/*": ["src/types/*"],
-      "@/utils/*": ["src/utils/*"]
+      "@/utils/*": ["src/utils/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/mocks/*": ["__mocks__/*"]
     },
     "plugins": [
       {
@@ -35,7 +35,10 @@
     "**/*.ts",
     "**/*.tsx",
     "types.d.ts",
-    ".next/types/**/*.ts"
-, "app/new/page.jsx", "app/[id]/NewBreweryForm.jsx"  ],
+    ".next/types/**/*.ts",
+    "app/new/page.jsx",
+    "app/[id]/NewBreweryForm.jsx",
+    "app/image_file_input/image_file_input.jsx"
+  ],
   "exclude": ["node_modules"]
 }
