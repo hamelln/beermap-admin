@@ -10,8 +10,8 @@ import {
   loadScrollPosition,
 } from "@/utils/search-result-cacher";
 import BreweryService from "@/services/BreweryService";
-import BreweryList from "./brewery-list/BreweryList";
-import SearchBar from "./search-bar/SearchBar";
+import BreweryList from "../src/components/BreweryList";
+import SearchBar from "@/components/SearchBar";
 
 const Search = () => {
   const [inputText, setInputText] = useState<string>("");

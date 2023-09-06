@@ -9,7 +9,7 @@ import Brewery from "@/types/Brewery";
 import useFormData from "@/hooks/useFormData";
 import BreweryService from "@/services/BreweryService";
 import ImageService from "@/services/ImageService";
-import S from "./brewery_edit_form.module.scss";
+import S from "./BreweryEditForm.module.scss";
 
 interface Props {
   brewery: Omit<BreweryDetailsProps, "summarizedOfficeHours">;

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import S from "./ThemeButton.module.scss";
 import SunIcon from "../icons/SunIcon";
 import MoonIcon from "../icons/MoonIcon";
+import S from "./ThemeButton.module.scss";
 
 const ThemeButton = () => {
   const [isDark, setIsDark] = useState<boolean>(false);

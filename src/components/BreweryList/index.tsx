@@ -5,7 +5,7 @@ import {
   saveKeyword,
   saveScrollPosition,
 } from "@/utils/search-result-cacher";
-import BreweryCard from "./brewery-card/BreweryCard";
+import BreweryCard from "./BreweryCard";
 
 interface Props {
   inputText: string;

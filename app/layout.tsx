@@ -1,6 +1,6 @@
 import "./normalize.scss";
 import "./global.scss";
-import ThemeButton from "./theme-button/ThemeButton";
+import ThemeButton from "@/components/ThemeButton";
 
 export const metadata = {
   title: "Next.js",
