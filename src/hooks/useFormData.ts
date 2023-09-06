@@ -1,63 +1,68 @@
 "use client";
 
+import Brewery from "@/types/Brewery";
 import MouseClick from "@/types/MouseClick";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 
-type Event =
+type FormEvent =
   | ChangeEvent<HTMLInputElement>
   | ChangeEvent<HTMLTextAreaElement>
   | MouseClick;
 
 const useFormData = (
-  onChange: Dispatch<SetStateAction<Object>>,
+  onChange: Dispatch<SetStateAction<Brewery>>,
   setFullAddress: Dispatch<SetStateAction<string>>
 ) => {
   const [selectedDay, setSelectedDay] = useState<string>("월");
 
-  const handleFormData = (e: Event) => {
+  const handleFormData = (e: FormEvent) => {
     if ("name" in e.target && "value" in e.target) {
-      const name = e.target.name;
-      const input = e.target.value;
-      if (typeof name === "string" && typeof input === "string") {
-        switch (name) {
+      const key = e.target.name;
+      const value = e.target.value;
+      if (typeof key === "string" && typeof value === "string") {
+        switch (key) {
           case "phone":
-            handlePhone(input, handleForm);
+            handlePhone(value, handleForm);
             break;
           case "address":
-            handleFullAddress(input);
+            handleFullAddress(value);
             break;
           case "websiteUrl":
-            handleWebsiteUrl(input);
+            handleWebsiteUrl(value);
             break;
           case "breweryDescription":
-            handleAutoResizeTextarea(e.target);
-            handleForm(name, input);
+            if (e.target instanceof HTMLTextAreaElement) {
+              handleResizeTextarea(e.target);
+              handleForm(key, value);
+            }
             break;
           case "beerDescription":
-            handleAutoResizeTextarea(e.target);
-            handleForm(name, input);
+            if (e.target instanceof HTMLTextAreaElement) {
+              handleResizeTextarea(e.target);
+              handleForm(key, value);
+            }
             break;
           case "openTime":
-            handleTime(name, input);
+            handleTime(key, value);
             break;
           case "closeTime":
-            handleTime(name, input);
+            handleTime(key, value);
             break;
           case "lastOrder":
-            handleTime(name, input);
+            handleTime(key, value);
             break;
           case "startTime":
-            handleTime(name, input);
+            handleTime(key, value);
             break;
           case "endTime":
-            handleTime(name, input);
+            handleTime(key, value);
             break;
           case "day":
             const day = e.target.textContent!;
             setSelectedDay(day);
             break;
           default:
-            handleForm(name, input);
+            handleForm(key, value);
             break;
         }
       }
@@ -100,22 +105,25 @@ const useFormData = (
     }
   };
 
-  const handleAutoResizeTextarea = (textarea: any) => {
+  const handleResizeTextarea = (textarea: HTMLTextAreaElement) => {
     textarea.style.height = "auto";
     textarea.style.height = textarea.scrollHeight + "px";
   };
 
-  const handleFullAddress = (input: string) => {
-    const addressParts = input.split(" ");
+  const handleFullAddress = (value: string) => {
+    const addressParts = value.split(" ");
     const [state, city, ...address] = addressParts;
     handleForm("stateProvince", state);
     handleForm("city", city);
     handleForm("address", address.join(" "));
-    setFullAddress(input);
+    setFullAddress(value);
   };
 
-  const handlePhone = (input: string, onChange: any) => {
-    const numericInput = input.replace(/\D/g, "");
+  const handlePhone = (
+    value: string,
+    handleForm: (key: string, value: string) => void
+  ) => {
+    const numericInput = value.replace(/\D/g, "");
     const SEOUL_SHORT = /^(\d{2})(\d{1,3})(\d{0,4})$/;
     const SEOUL_MEDIUM = /^(\d{2})(\d{1,4})(\d{0,4})$/;
     const MEDIUM = /^(\d{3})(\d{1,3})(\d{0,4})$/;
@@ -140,26 +148,26 @@ const useFormData = (
     };
 
     const formattedPhone = trans(numericInput);
-    onChange("phone", formattedPhone);
+    handleForm("phone", formattedPhone);
   };
 
-  const handleWebsiteUrl = (input: string) => {
-    if (input.includes("instagram")) {
+  const handleWebsiteUrl = (value: string) => {
+    if (value.includes("instagram")) {
       handleForm("websiteType", "인스타그램");
     } else {
       handleForm("websiteType", "홈페이지");
     }
-    handleForm("websiteUrl", input);
+    handleForm("websiteUrl", value);
   };
 
-  const handleTime = (name: string, input: string) => {
-    const numericValue = input.replace(/\D/g, "");
+  const handleTime = (key: string, value: string) => {
+    const numericValue = value.replace(/\D/g, "");
     const formattedValue =
       numericValue.length <= 2
         ? numericValue
         : numericValue.slice(0, 2) + ":" + numericValue.slice(2, 4);
     if (numericValue.length <= 4) {
-      handleOfficeHours(name, formattedValue);
+      handleOfficeHours(key, formattedValue);
     }
   };
 
