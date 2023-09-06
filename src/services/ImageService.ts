@@ -1,9 +1,9 @@
 import {
   CloudinaryResponse,
-  ImageUploaderInterface,
-} from "@/types/ImageUploaderInterface";
+  ImageServiceInterface,
+} from "@/types/ImageServiceInterface";
 
-class ImageUploader implements ImageUploaderInterface {
+class ImageService implements ImageServiceInterface {
   private readonly USER_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_USER_NAME!;
   private readonly CLOUD_URL = process.env.NEXT_PUBLIC_CLOUDINARY_URL!;
   private readonly CLOUD_API_URL = process.env.NEXT_PUBLIC_CLOUDINARY_API_URL!;
@@ -40,4 +40,4 @@ class ImageUploader implements ImageUploaderInterface {
   }
 }
 
-export default ImageUploader;
+export default ImageService;

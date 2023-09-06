@@ -5,7 +5,7 @@ export interface CloudinaryResponse {
   format: string;
 }
 
-export interface ImageUploaderInterface {
+export interface ImageServiceInterface {
   uploadOnce(file: File): Promise<CloudinaryResponse>;
   upload(files: File[]): any;
 }
