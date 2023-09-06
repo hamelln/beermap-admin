@@ -12,7 +12,7 @@
 
   & input,
   textarea {
-    width: 280px;
+    width: 400px;
     height: auto;
     padding: 6px;
     color: var(--color-font-primary);
@@ -96,6 +96,10 @@
     width: 60px;
     text-align: center;
   }
+}
+
+.image_input {
+  display: none;
 }
 
 .submit_box {

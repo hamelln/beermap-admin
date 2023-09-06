@@ -1,280 +1,428 @@
 "use client";
 
-import React, { useState } from "react";
-import styles from "./BreweryDetails.module.scss";
-import BreweriesApi from "@/services/BreweriesApi";
-import Brewery from "@/types/Brewery";
-import ImageFileInput from "@/app/image_file_input/image_file_input";
-import ImageUploader from "@/services/image-uploader";
-import Img from "@/types/Img";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import BreweryDetailsProps from "@/types/BreweryDetailsProps";
+import Img from "@/types/Img";
+import MouseClick from "@/types/MouseClick";
+import Brewery from "@/types/Brewery";
+import useFormData from "@/hooks/useFormData";
+import BreweryService from "@/services/BreweryService";
+import ImageService from "@/services/ImageService";
+import S from "./brewery_edit_form.module.scss";
 
 interface Props {
-  breweryData: Brewery;
+  brewery: Omit<BreweryDetailsProps, "summarizedOfficeHours">;
 }
 
-export default function BreweryEditForm({ breweryData }: any) {
-  const [breweryName, setBreweryName] = useState(breweryData.breweryName);
-  const [breweryIntro, setBreweryIntro] = useState(breweryData.breweryIntro);
-  const [breweryDescription, setBreweryDescription] = useState(
-    breweryData.breweryDescription
+const BreweryEditForm = ({ brewery }: Props) => {
+  const [updatedBrewery, setUpdatedBrewery] = useState<Brewery>({
+    ...brewery,
+    images: brewery.images ?? [],
+  });
+  const [fullAddress, setFullAddress] = useState<string>("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [totalFiles, setTotalFiles] = useState<any[]>(
+    brewery.images ? brewery.images.map((_: any) => "url") : []
   );
-  const [stateProvince, setStateProvince] = useState(breweryData.stateProvince);
-  const [city, setCity] = useState(breweryData.city);
-  const [address, setAddress] = useState(breweryData.address);
-  const [phone, setPhone] = useState(breweryData.phone);
-  const [websiteUrl, setWebsiteUrl] = useState(breweryData.websiteUrl);
-  const [officeHours, setOfficeHours] = useState(breweryData.officeHours);
-  const [signatureBeerName, setSignatureBeerName] = useState(
-    breweryData.signatureBeer.beerName
-  );
-  const [signatureBeerDescription, setSignatureBeerDescription] = useState(
-    breweryData.signatureBeer.beerDescription
-  );
-  const [breweryImages, setBreweryImages] = useState<Img[]>(
-    breweryData.images ?? []
+  const inputRef = useRef<HTMLInputElement>(null);
+  const beerDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const breweryDescriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  const days: string[] = ["월", "화", "수", "목", "금", "토", "일"];
+  const breweryService = new BreweryService();
+  const imageService = new ImageService();
+
+  const { handleFormData, selectedDay } = useFormData(
+    setUpdatedBrewery,
+    setFullAddress
   );
 
-  const days = ["월", "화", "수", "목", "금", "토", "일"];
-  const breweriesApi = new BreweriesApi();
-  const imageUploader = new ImageUploader();
-
-  const FileInput = (props: any) => (
-    <ImageFileInput {...props} imageUploader={imageUploader} />
-  );
-
-  const onFileChange = async (srcs: Img[]) => {
-    const newBreweryImages = [...breweryImages, ...srcs];
-    setBreweryImages(newBreweryImages);
-    const updatedBrewery = {
-      ...breweryData,
-      images: newBreweryImages,
-    };
-    await breweriesApi.updateBrewery(updatedBrewery);
+  const onButtonClick = (e: MouseClick) => {
+    e.preventDefault();
+    inputRef?.current?.click();
   };
 
-  const handleClick = async () => {
-    await breweriesApi.deleteBrewery(breweryData.id);
+  const onChange = async (e: any) => {
+    const files = e.target.files;
+    setTotalFiles([...totalFiles, ...files]);
+    setFiles(files);
   };
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
-
-    const updatedSignatureBeer = {
-      signatureBeerName,
-      signatureBeerDescription,
-    };
-
-    const updatedBrewery = {
-      ...breweryData,
-      breweryName,
-      breweryDescription,
-      stateProvince,
-      city,
-      address,
-      phone,
-      websiteUrl,
-      images: breweryImages,
-      officeHours,
-      signatureBeer: updatedSignatureBeer,
-    };
-
-    await breweriesApi.updateBrewery(updatedBrewery);
+  const deleteImage = (index: number) => {
+    const updatedImages = updatedBrewery.images.filter(
+      (_: any, i: number) => i !== index
+    );
+    const updatedTotalFiles = totalFiles.filter(
+      (_: any, i: number) => i !== index
+    );
+    const newBrewery = { ...updatedBrewery, images: updatedImages };
+    setTotalFiles(updatedTotalFiles);
+    setUpdatedBrewery(newBrewery);
   };
+
+  const uploadNewImages = async () => {
+    const newFiles = totalFiles.filter((file) => file !== "url");
+    const newCloudinaryImages: Img[] = await imageService.upload(newFiles);
+    const filteredImages = updatedBrewery.images.filter(
+      (image: Img) => !image.id.includes("temp")
+    );
+    const newImages = [...filteredImages, ...newCloudinaryImages];
+    setUpdatedBrewery({ ...updatedBrewery, images: newImages });
+  };
+
+  const deleteBrewery = async () => {
+    await breweryService.deleteBrewery(brewery.id);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    await uploadNewImages();
+    await breweryService.updateBrewery(updatedBrewery);
+  };
+
+  useEffect(() => {
+    if (files) {
+      const fileReader = new FileReader();
+      const newImages = [...updatedBrewery.images];
+
+      const loadImage = (fileIndex: number) => {
+        if (fileIndex < files.length) {
+          fileReader.onload = () => {
+            const src = fileReader.result as string;
+            const newImage = {
+              id: `temp-${Math.random()}`,
+              small: src,
+              medium: src,
+              large: src,
+            };
+            newImages.push(newImage);
+            loadImage(fileIndex + 1);
+          };
+          fileReader.readAsDataURL(files[fileIndex]);
+        } else {
+          setUpdatedBrewery({ ...updatedBrewery, images: newImages });
+        }
+      };
+      loadImage(0);
+    }
+  }, [files]);
+
+  useEffect(() => {
+    const beerDescription = beerDescriptionRef.current!;
+    const breweryDescription = breweryDescriptionRef.current!;
+    beerDescription.style.height = beerDescription.scrollHeight + "px";
+    breweryDescription.style.height = breweryDescription.scrollHeight + "px";
+  }, []);
+
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <div className={styles.image_box}>
-        {breweryImages.map((srcs: Img, i: number) => {
-          return (
-            <div key={i} className={styles.image}>
-              <Image
-                src={srcs.small}
-                width={200}
-                height={200}
-                alt="브루어리 이미지"
-              />
+    <section className={S.section}>
+      <form className={S.form} onSubmit={handleSubmit}>
+        <h1>가게 정보 수정</h1>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>이름</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="이름"
+              value={updatedBrewery.breweryName}
+              name="breweryName"
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>브루어리 유형</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="브루어리 유형"
+              value={updatedBrewery.breweryType}
+              name="breweryType"
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <p>사진</p>
+          </div>
+          <ul className={S.image_box}>
+            {updatedBrewery.images?.length > 0 &&
+              updatedBrewery.images.map((image: Img, i: number) => {
+                return (
+                  <li key={image.id as string} className={S.image}>
+                    <Image
+                      src={image.small}
+                      alt="image"
+                      width={200}
+                      height={200}
+                    ></Image>
+                    <button
+                      className={S.delete_button}
+                      onClick={() => {
+                        deleteImage(i);
+                      }}
+                    >
+                      X
+                    </button>
+                  </li>
+                );
+              })}
+            <input
+              className={S.image_input}
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              name="file"
+              onChange={onChange}
+            />
+            <button className={S.upload_button} onClick={onButtonClick}>
+              업로드
+            </button>
+          </ul>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>주소</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="주소"
+              name="address"
+              value={fullAddress}
+              onChange={handleFormData}
+            />
+            <div>도, 특별시, 광역시: {updatedBrewery.stateProvince}</div>
+            <div>시군구: {updatedBrewery.city}</div>
+            <div>나머지 주소: {updatedBrewery.address}</div>
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>우편 번호</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="우편 번호"
+              name="postalCode"
+              value={updatedBrewery.postalCode}
+              maxLength={5}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>경도(longitude)</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="경도"
+              name="longitude"
+              value={updatedBrewery.longitude}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>위도(latitude)</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="위도"
+              name="latitude"
+              value={updatedBrewery.latitude}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>전화번호</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="전화번호"
+              name="phone"
+              value={updatedBrewery.phone}
+              maxLength={14}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>홈페이지, SNS</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="홈페이지, SNS"
+              value={updatedBrewery.websiteUrl}
+              name="websiteUrl"
+              onChange={handleFormData}
+            />
+            <div>사이트 타입: {updatedBrewery.websiteType}</div>
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>가게 한 줄 소개</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="가게 한 줄 소개"
+              name="breweryIntro"
+              value={updatedBrewery.breweryIntro}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>가게 전체 소개</span>
+          </div>
+          <div className={S.input_box}>
+            <textarea
+              placeholder="가게 설명"
+              ref={breweryDescriptionRef}
+              name="breweryDescription"
+              value={updatedBrewery.breweryDescription}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>추천 맥주 이름</span>
+          </div>
+          <div className={S.input_box}>
+            <input
+              type="text"
+              placeholder="추천 맥주 이름"
+              name="beerName"
+              value={updatedBrewery.beerName}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>추천 맥주 설명</span>
+          </div>
+          <div className={S.input_box}>
+            <textarea
+              placeholder="추천 맥주 설명"
+              name="beerDescription"
+              ref={beerDescriptionRef}
+              value={updatedBrewery.beerDescription}
+              onChange={handleFormData}
+            />
+          </div>
+        </div>
+        <div className={S.info_box}>
+          <div className={S.name_box}>
+            <span>영업 시간</span>
+          </div>
+          <div className={S.input_box}>
+            <div>
+              <div>
+                {days.map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    name="day"
+                    onClick={handleFormData}
+                    className={selectedDay === day ? S.selected : ""}
+                  >
+                    {day}
+                  </button>
+                ))}
+              </div>
+              <div>
+                <div className={S.time_box}>
+                  <span>오픈 - 마감</span>
+                  <input
+                    type="text"
+                    placeholder="00:00"
+                    value={updatedBrewery.officeHours[selectedDay].openTime}
+                    name="openTime"
+                    onChange={handleFormData}
+                  />{" "}
+                  ~
+                  <input
+                    type="text"
+                    placeholder="00:00"
+                    name="closeTime"
+                    value={updatedBrewery.officeHours[selectedDay].closeTime}
+                    onChange={handleFormData}
+                  />
+                </div>
+                <div className={S.time_box}>
+                  <span>브레이크 타임</span>
+                  <input
+                    type="text"
+                    placeholder="00:00"
+                    value={
+                      updatedBrewery.officeHours[selectedDay].breakTime
+                        ?.startTime
+                    }
+                    name="startTime"
+                    onChange={handleFormData}
+                  />{" "}
+                  ~
+                  <input
+                    type="text"
+                    placeholder="00:00"
+                    name="endTime"
+                    value={
+                      updatedBrewery.officeHours[selectedDay].breakTime?.endTime
+                    }
+                    onChange={handleFormData}
+                  />
+                </div>
+                <div className={S.time_box}>
+                  <span>라스트 오더</span>
+                  <input
+                    type="text"
+                    placeholder="00:00"
+                    value={updatedBrewery.officeHours[selectedDay].lastOrder}
+                    name="lastOrder"
+                    onChange={handleFormData}
+                  />
+                </div>
+              </div>
             </div>
-          );
-        })}
-      </div>
-      <div className={styles.info_box}>
-        <FileInput onFileChange={onFileChange} />
-      </div>
-      <div className={styles.info_box}>
-        <label
-          htmlFor="breweryName"
-          onClick={() => {
-            console.log(breweryImages);
-          }}
-        >
-          가게 이름
-        </label>
-        <input
-          type="text"
-          id="breweryName"
-          value={breweryName}
-          onChange={(e) => setBreweryName(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="breweryIntro">가게 한 줄 소개</label>
-        <textarea
-          id="breweryIntro"
-          value={breweryIntro}
-          onChange={(e) => setBreweryIntro(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="breweryDescription">가게 소개</label>
-        <textarea
-          id="breweryDescription"
-          value={breweryDescription}
-          onChange={(e) => setBreweryDescription(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="stateProvince">도/특별/광역시</label>
-        <input
-          type="text"
-          id="stateProvince"
-          value={stateProvince}
-          onChange={(e) => setStateProvince(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="city">시군구</label>
-        <input
-          type="text"
-          id="city"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="address">나머지 주소</label>
-        <input
-          type="text"
-          id="address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="phone">전화 번호</label>
-        <input
-          type="text"
-          id="phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="websiteUrl">사이트, 인스타 URL</label>
-        <input
-          type="text"
-          id="websiteUrl"
-          value={websiteUrl}
-          onChange={(e) => setWebsiteUrl(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="officeHours">운영 시간</label>
-        <ul>
-          {days.map((day, i) => (
-            <div className={styles.info_box} key={i}>
-              <p>{day}요일</p>
-              영업 개시
-              <input
-                type="text"
-                value={officeHours[day].openTime}
-                onChange={(e) =>
-                  setOfficeHours({
-                    ...officeHours,
-                    [day]: { ...officeHours[day], openTime: e.target.value },
-                  })
-                }
-              />
-              영업 마감
-              <input
-                type="text"
-                value={officeHours[day].closeTime}
-                onChange={(e) =>
-                  setOfficeHours({
-                    ...officeHours,
-                    [day]: { ...officeHours[day], closeTime: e.target.value },
-                  })
-                }
-              />
-              브레이크 시작
-              <input
-                type="text"
-                value={officeHours[day].breakTime?.startTime}
-                onChange={(e) => {
-                  const newBreakTime = { ...officeHours[day].breakTime };
-                  newBreakTime.startTime = e.target.value;
-                  setOfficeHours({
-                    ...officeHours,
-                    [day]: { ...officeHours[day], breakTime: newBreakTime },
-                  });
-                }}
-              />
-              브레이크 마감
-              <input
-                type="text"
-                value={officeHours[day].breakTime?.endTime}
-                onChange={(e) => {
-                  const newBreakTime = { ...officeHours[day].breakTime };
-                  newBreakTime.endTime = e.target.value;
-                  setOfficeHours({
-                    ...officeHours,
-                    [day]: { ...officeHours[day], breakTime: newBreakTime },
-                  });
-                }}
-              />
-              라스트 오더
-              <input
-                type="text"
-                value={officeHours[day].lastOrder}
-                onChange={(e) =>
-                  setOfficeHours({
-                    ...officeHours,
-                    [day]: { ...officeHours[day], lastOrder: e.target.value },
-                  })
-                }
-              />
-            </div>
-          ))}
-        </ul>
-      </div>
-
-      <div className={styles.info_box}>
-        <label htmlFor="signatureBeerName">추천 맥주 이름</label>
-        <input
-          type="text"
-          id="signatureBeerName"
-          value={signatureBeerName}
-          onChange={(e) => setSignatureBeerName(e.target.value)}
-        />
-      </div>
-      <div className={styles.info_box}>
-        <label htmlFor="signatureBeerDescription">맥주 설명</label>
-        <textarea
-          id="signatureBeerDescription"
-          value={signatureBeerDescription}
-          onChange={(e) => setSignatureBeerDescription(e.target.value)}
-        />
-      </div>
-
-      <button type="submit" style={{ color: "var(--color-font-primary)" }}>
-        정보 수정하기
-      </button>
-      <button
-        type="button"
-        onClick={handleClick}
-        style={{ color: "var(--color-font-primary)" }}
-      >
-        가게 정보 삭제
-      </button>
-    </form>
+          </div>
+        </div>
+        <div className={S.submit_box}>
+          <button type="submit" className={S.submit_button}>
+            가게 수정
+          </button>
+          <button
+            type="button"
+            onClick={deleteBrewery}
+            className={S.delete_brewery}
+          >
+            가게 삭제
+          </button>
+        </div>
+      </form>
+    </section>
   );
-}
+};
+
+export default BreweryEditForm;
