@@ -1,25 +1,28 @@
 import Brewery from "@/types/Brewery";
-import BreweryDetailsProps from "@/types/BreweryDetailsProps";
 
 class BreweryService {
   private readonly baseUrl: string = "http://localhost:3008";
 
   async fetchBreweriesByInputText(query: string): Promise<Brewery[]> {
-    const breweries: Brewery[] = await fetch(`${this.baseUrl}?q=${query}`, {
-      method: "POST",
-    }).then((res) => res.json());
-
+    const uri: string = `${this.baseUrl}?q=${query}`;
+    const httpOptions: RequestInit = { method: "POST" };
+    const breweries: Brewery[] = await fetch(uri, httpOptions).then((res) =>
+      res.json()
+    );
     return breweries;
   }
 
-  async fetchBreweryById(breweryId: string): Promise<BreweryDetailsProps> {
-    try {
-      const brewery: BreweryDetailsProps = await fetch(
-        `${this.baseUrl}/${breweryId}`,
-        { cache: "no-store" }
-      ).then((res) => res.json());
-      console.log(brewery);
+  async fetchBreweryById(breweryId: string): Promise<Brewery> {
+    const uri: string = `${this.baseUrl}/${breweryId}`;
+    const httpOptions: RequestInit = {
+      method: "GET",
+      cache: "no-store",
+    };
 
+    try {
+      const brewery: Brewery = await fetch(uri, httpOptions).then((res) =>
+        res.json()
+      );
       return brewery;
     } catch (e: any) {
       if (e.response.status === 404) {
