@@ -1,3 +1,5 @@
+export type Day = "월" | "화" | "수" | "목" | "금" | "토" | "일";
+
 export interface OfficeHour {
   openTime: string;
   closeTime: string;
@@ -5,6 +7,6 @@ export interface OfficeHour {
   lastOrder?: string;
 }
 
-type OfficeHours = Record<string, OfficeHour>;
+type OfficeHours = Record<Day, OfficeHour>;
 
 export default OfficeHours;

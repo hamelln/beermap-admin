@@ -9,6 +9,7 @@ import useFormData from "@/hooks/useFormData";
 import BreweryService from "@/services/BreweryService";
 import ImageService from "@/services/ImageService";
 import S from "./BreweryEditForm.module.scss";
+import { Day } from "@/types/OfficeHours";
 
 interface Props {
   brewery: Brewery;
@@ -28,7 +29,7 @@ const BreweryEditForm = ({ brewery }: Props) => {
   const beerDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const breweryDescriptionRef = useRef<HTMLTextAreaElement>(null);
 
-  const days: string[] = ["월", "화", "수", "목", "금", "토", "일"];
+  const days: Day[] = ["월", "화", "수", "목", "금", "토", "일"];
   const breweryService = new BreweryService();
   const imageService = new ImageService();
 

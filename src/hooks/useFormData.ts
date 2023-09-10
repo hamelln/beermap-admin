@@ -2,6 +2,7 @@
 
 import Brewery from "@/types/Brewery";
 import MouseClick from "@/types/MouseClick";
+import { Day } from "@/types/OfficeHours";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 
 type FormEvent =
@@ -13,7 +14,7 @@ const useFormData = (
   onChange: Dispatch<SetStateAction<Brewery>>,
   setFullAddress: Dispatch<SetStateAction<string>>
 ) => {
-  const [selectedDay, setSelectedDay] = useState<string>("월");
+  const [selectedDay, setSelectedDay] = useState<Day>("월");
 
   const handleFormData = (e: FormEvent) => {
     if ("name" in e.target && "value" in e.target) {
@@ -58,7 +59,7 @@ const useFormData = (
             handleTime(key, value);
             break;
           case "day":
-            const day = e.target.textContent!;
+            const day = <Day>e.target.textContent;
             setSelectedDay(day);
             break;
           default:
