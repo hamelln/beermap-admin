@@ -1,3 +1,4 @@
+import React from "react";
 import "./normalize.scss";
 import "./global.scss";
 import ThemeButton from "@/components/ThemeButton";
