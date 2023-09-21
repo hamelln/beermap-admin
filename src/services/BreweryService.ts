@@ -1,10 +1,10 @@
 import Brewery from "@/types/Brewery";
 
 class BreweryService {
-  private readonly baseUrl: string = "http://localhost:3008";
+  private readonly baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   async fetchBreweriesByInputText(query: string): Promise<Brewery[]> {
-    const uri: string = `${this.baseUrl}?q=${query}`;
+    const uri = `${this.baseUrl}?q=${query}`;
     const httpOptions: RequestInit = { method: "POST" };
     const breweries: Brewery[] = await fetch(uri, httpOptions).then((res) =>
       res.json()
@@ -16,7 +16,7 @@ class BreweryService {
     const uri: string = `${this.baseUrl}/${breweryId}`;
     const httpOptions: RequestInit = {
       method: "GET",
-      cache: "no-store",
+      cache: "no-cache",
     };
 
     try {
